@@ -85,4 +85,33 @@ class Chef
     co_worker_list.map { |co_worker| Chef.parse(co_worker) }    
   end
   
+  def reviews
+    #when chef was head chef there
+    query = <<-SQL
+        
+    SELECT restaurant_reviews.* 
+      FROM restaurant_reviews    
+      JOIN (SELECT restaurant_id, start_date, end_date
+              FROM chef_tenures
+             WHERE chef_id = ? AND is_head_chef = 1 ) AS my_tenures
+        ON restaurant_reviews.restaurant_id = my_tenures.restaurant_id   
+     WHERE restaurant_reviews.review_date
+           BETWEEN my_tenures.start_date AND my_tenures.end_date
+    SQL
+    
+    review_list = ReviewsDatabase.instance.execute(query, self.id)
+    review_list.map { |review| RestaurantReview.parse(review) }           
+  end
+  
 end
+
+
+
+
+
+
+
+
+
+
+
