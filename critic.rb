@@ -51,4 +51,14 @@ class Critic
     review_list.map { |review| RestaurantReview.parse(review) }
   end
   
+  def average_review_score
+    #returns a number: SUM(all scores by this critic)/number of reviews
+    query = <<-SQL
+      SELECT AVG(score)
+        FROM restaurantreview
+       WHERE critic_id = ?
+    SQL
+    ReviewsDatabase.instance.get_first_value(query, self.id)
+  end
+  
 end
