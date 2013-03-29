@@ -26,6 +26,16 @@ class Restaurant
                    cuisine: restaurant["cuisine"])
   end
   
+  def self.by_neighborhood
+    query = <<-SQL
+      SELECT *
+        FROM restaurant
+    ORDER BY neighborhood
+    SQL
+    restaurant_list = ReviewsDatabase.instance.execute(query)
+    restaurant_list.map { |restaurant| Restaurant.parse(restaurant) }
+  end
+  
   def initialize(options = {})
     @id = options[:id]
     @name = options[:name]
