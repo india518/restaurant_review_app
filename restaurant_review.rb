@@ -1,0 +1,4 @@
+class RestaurantReview
+  
+  
+end
