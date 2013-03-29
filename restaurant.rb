@@ -55,5 +55,27 @@ class Restaurant
 
     true
   end
+  
+  def reviews
+    #return all reviews for this restaurant
+    query = <<-SQL
+      SELECT *
+        FROM restaurantreview
+       WHERE restaurant_id = ?
+    SQL
+    review_list = ReviewsDatabase.instance.execute(query, self.id)
+    review_list.map { |review| RestaurantReview.parse(review) }   
+  end
+  
+  def average_review_score
+    #return a number: SUM(scores for this restaurant)/total reviews
+    query = <<-SQL
+      SELECT AVG(score)
+        FROM restaurantreview
+       WHERE restaurant_id = ?
+    SQL
+        
+    ReviewsDatabase.instance.get_first_value(query, self.id)
+  end
 
 end
