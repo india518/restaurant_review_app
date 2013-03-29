@@ -43,7 +43,7 @@ class ChefTenure
       INSERT INTO cheftenure (id, chef_id, restaurant_id, start_date, end_date, is_head_chef)
       VALUES (NULL, ?, ?, ?, ?, ?) #yeah we need a better way to do this
     SQL
-    QuestionsDatabase.instance.execute(query, cheftenure.chef_id, cheftenure.restaurant_id,
+    ReviewsDatabase.instance.execute(query, cheftenure.chef_id, cheftenure.restaurant_id,
                                        cheftenure.start_date, cheftenure.end_date,
                                        cheftenure.is_head_chef)
     true

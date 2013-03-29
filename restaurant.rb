@@ -50,8 +50,8 @@ class Restaurant
       INSERT INTO restaurant (id, name, chef_id, neighborhood, cuisine)
       VALUES (NULL, ?, ?, ?, ?)
     SQL
-    QuestionsDatabase.instance.execute(query, restaurant.name, restaurant.chef_id,
-                                       restaurant.neighborhood, restaurant.cuisine)
+    ReviewsDatabase.instance.execute(query, restaurant.name, restaurant.chef_id,
+                                     restaurant.neighborhood, restaurant.cuisine)
 
     true
   end

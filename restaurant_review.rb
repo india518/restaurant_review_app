@@ -42,8 +42,8 @@ class RestaurantReview
       INSERT INTO restaurant (id, restaurant_id, critic_id, score, review_date, review)
       VALUES (NULL, ?, ?, ?, ?, ?)
     SQL
-    QuestionsDatabase.instance.execute(query, review.restaurant_id, review.critic_id,
-                                       review.score, review.review_date, review.review)
+    ReviewsDatabase.instance.execute(query, review.restaurant_id, review.critic_id,
+                                     review.score, review.review_date, review.review)
 
     true
   end

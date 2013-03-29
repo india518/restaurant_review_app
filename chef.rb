@@ -33,7 +33,7 @@ class Chef
       VALUES (NULL, ?, ?, ?)
     SQL
     
-    QuestionsDatabase.instance.execute(query, chef.first_name, chef.last_name, chef.mentor_id)
+    ReviewsDatabase.instance.execute(query, chef.first_name, chef.last_name, chef.mentor_id)
     true
   end
 

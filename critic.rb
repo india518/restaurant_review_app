@@ -31,13 +31,24 @@ class Critic
       VALUES (NULL, ?)
     SQL
     
-    QuestionsDatabase.instance.execute(query, critic.screen_name)
+    ReviewsDatabase.instance.execute(query, critic.screen_name)
     true
   end
 
   def initialize(options = {})
     @id = options[:id]
     @screen_name = options[:screen_name]
+  end
+  
+  def reviews
+    #return a list of all reviews this reviewer has writen
+    query = <<-SQL
+      SELECT *
+        FROM restaurantreview
+       WHERE critic_id = ?
+    SQL
+    review_list = ReviewsDatabase.instance.execute(query, self.id)
+    review_list.map { |review| RestaurantReview.parse(review) }
   end
   
 end
