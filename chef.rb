@@ -43,4 +43,27 @@ class Chef
     @mentor_id = options[:mentor_id]
   end
   
+  def proteges
+    #return a list of chef objects for which I am the mentor
+    query = <<-SQL
+      SELECT *
+        FROM chef
+       WHERE mentor_id = ?
+    SQL
+    
+    proteges_list = ReviewsDatabase.instance.execute(query, self.id)
+    proteges_list.map { |proteges| Chef.parse(proteges) }
+  end
+  
+  def num_proteges
+    #proteges.length
+    query = <<-SQL
+      SELECT COUNT(*)
+        FROM chef
+       WHERE mentor_id = ?
+    SQL
+    
+    proteges = ReviewsDatabase.instance.get_first_value(query, self.id)
+  end
+  
 end
