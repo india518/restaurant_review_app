@@ -1,5 +1,6 @@
 require 'sqlite3'
 require_relative 'reviews_database'
+require_relative 'restaurant'
 
 class Chef
   
@@ -19,10 +20,10 @@ class Chef
   end
 
   def self.parse(chef)
-    chef = Chef.new(id: chef["id"],
-                    first_name: chef["first_name"],
-                    last_name: chef["last_name"],
-                    mentor_id: chef["mentor_id"])
+    Chef.new(id: chef["id"],
+             first_name: chef["first_name"],
+             last_name: chef["last_name"],
+             mentor_id: chef["mentor_id"])
   end
   
   def self.save(chef)
