@@ -22,13 +22,13 @@ CREATE TABLE restaurant(
   cuisine VARCHAR(255)
 );
 
-INSERT INTO restaurant (id, name, neighborhood, cuisine)
-VALUES (NULL, 'PBS Studio', 'PBS', 'French'),
-       (NULL, 'Naglee Park Garage', 'Naglee Park', 'American'),
-       (NULL, 'Moto', 'Downtown', 'Molecular Gastronomy'),
-	   (NULL, 'Otom', 'Downtown', 'Molecular Gastronomy'),
-       (NULL, 'BurgerJoint', 'Downtown', 'American'),
-	   (NULL, 'FoodNetwork', 'TV Land', 'British');
+INSERT INTO restaurant (id, name ,chef_id, neighborhood, cuisine)
+VALUES (NULL, 'PBS Studio', 1, 'PBS', 'French'),
+       (NULL, 'Naglee Park Garage', 4, 'Naglee Park', 'American'),
+       (NULL, 'Moto', 3, 'Downtown', 'Molecular Gastronomy'),
+	   (NULL, 'Otom', 5, 'Downtown', 'Molecular Gastronomy'),
+       (NULL, 'BurgerJoint', 4, 'Downtown', 'American'),
+	   (NULL, 'FoodNetwork', 6, 'TV Land', 'British');
 
 CREATE TABLE cheftenure(
   id INTEGER PRIMARY KEY,

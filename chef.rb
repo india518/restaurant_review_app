@@ -8,29 +8,31 @@ class Chef
   
   def self.find_all
     query = "SELECT * FROM chef"
-    chef_array = ReviewsDatabase.instance.execute(query)
+    chef_list = ReviewsDatabase.instance.execute(query)
+    chef_list.map { |chef| Chef.parse(chef) }
   end
   
   def self.find_by_id(id)
     query = "SELECT * FROM chef WHERE id = ?"
-    chef_array = ReviewsDatabase.instance.execute(query, id)
-    chef_array.empty? ? nil : parse(chef_array[0])
+    chef_list = ReviewsDatabase.instance.execute(query, id)
+    chef_list.empty? ? nil : Chef.parse(chef_list[0])
   end
 
-  def self.parse(chef_array)
-    chef = Chef.new(id: chef_array["id"],
-                    first_name: chef_array["first_name"],
-                    last_name: chef_array["last_name"],
-                    mentor_id: chef_array["mentor_id"])
+  def self.parse(chef)
+    chef = Chef.new(id: chef["id"],
+                    first_name: chef["first_name"],
+                    last_name: chef["last_name"],
+                    mentor_id: chef["mentor_id"])
   end
   
   def self.save(chef)
+    #refactor later for saving existing chef with changed data
     query = <<-SQL
       INSERT INTO chef (id, first_name, last_name, mentor_id)
       VALUES (NULL, ?, ?, ?)
     SQL
+    
     QuestionsDatabase.instance.execute(query, chef.first_name, chef.last_name, chef.mentor_id)
-
     true
   end
 
