@@ -39,6 +39,10 @@ CREATE TABLE cheftenure(
   is_head_chef INTEGER
 );
 
+-- Reminder to self:
+-- SELECT start_date FROM cheftenure WHERE start_date <= date('2005-09-11')
+-- returns all start_dates before or on that date!
+
 INSERT INTO cheftenure (id, chef_id, restaurant_id, start_date, end_date, is_head_chef)
 VALUES (NULL, 1, 1, '1956-12-12', '1990-06-21', 1),
        (NULL, 4, 5, '2001-07-14', '2009-02-28', 0),

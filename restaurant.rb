@@ -13,10 +13,7 @@ class Restaurant
   
   def self.find_by_id(id)
     query = "SELECT * FROM restaurant WHERE id = ?"
-    restaurant_list = ReviewsDatabase.instance.execute(query, id)
-    
-    p restaurant_list[0]
-    
+    restaurant_list = ReviewsDatabase.instance.execute(query, id)    
     restaurant_list.empty? ? nil : parse(restaurant_list[0])
   end
 
