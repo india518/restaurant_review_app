@@ -8,13 +8,13 @@ class RestaurantReview
   attr_accessor :id #make this a reader later?
   
   def self.find_all
-    query = "SELECT * FROM restaurantreview"
+    query = "SELECT * FROM restaurant_reviews"
     review_list = ReviewsDatabase.instance.execute(query)
     review_list.map { |review| RestaurantReview.parse(review) }
   end
   
   def self.find_by_id(id)
-    query = "SELECT * FROM restaurantreview WHERE id = ?"
+    query = "SELECT * FROM restaurant_reviews WHERE id = ?"
     review_list = ReviewsDatabase.instance.execute(query, id)    
     review_list.empty? ? nil : parse(review_list[0])
   end
@@ -39,12 +39,13 @@ class RestaurantReview
     #refactor later for saving existing restaurant with changed data
     #Also: refactor SQL later! Options hash, not "?" !!!
     query = <<-SQL
-      INSERT INTO restaurant (id, restaurant_id, critic_id, score, review_date, review)
+      INSERT INTO restaurants (id, restaurant_id, critic_id, score, review_date, review)
       VALUES (NULL, ?, ?, ?, ?, ?)
     SQL
-    ReviewsDatabase.instance.execute(query, review.restaurant_id, review.critic_id,
-                                     review.score, review.review_date, review.review)
-
+    ReviewsDatabase.instance.execute(query, review.restaurant_id,
+                                     review.critic_id,
+                                     review.score, review.review_date,
+                                     review.review)
     true
   end
 

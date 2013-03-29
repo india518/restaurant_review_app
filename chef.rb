@@ -8,13 +8,13 @@ class Chef
   attr_accessor :id #make this a reader later?
   
   def self.find_all
-    query = "SELECT * FROM chef"
+    query = "SELECT * FROM chefs"
     chef_list = ReviewsDatabase.instance.execute(query)
     chef_list.map { |chef| Chef.parse(chef) }
   end
   
   def self.find_by_id(id)
-    query = "SELECT * FROM chef WHERE id = ?"
+    query = "SELECT * FROM chefs WHERE id = ?"
     chef_list = ReviewsDatabase.instance.execute(query, id)
     chef_list.empty? ? nil : Chef.parse(chef_list[0])
   end
@@ -29,7 +29,7 @@ class Chef
   def self.save(chef)
     #refactor later for saving existing chef with changed data
     query = <<-SQL
-      INSERT INTO chef (id, first_name, last_name, mentor_id)
+      INSERT INTO chefs (id, first_name, last_name, mentor_id)
       VALUES (NULL, ?, ?, ?)
     SQL
     
@@ -47,7 +47,7 @@ class Chef
     #return a list of chef objects for which I am the mentor
     query = <<-SQL
       SELECT *
-        FROM chef
+        FROM chefs
        WHERE mentor_id = ?
     SQL
     
@@ -59,11 +59,30 @@ class Chef
     #proteges.length
     query = <<-SQL
       SELECT COUNT(*)
-        FROM chef
+        FROM chefs
        WHERE mentor_id = ?
     SQL
     
     proteges = ReviewsDatabase.instance.get_first_value(query, self.id)
+  end
+  
+  def co_workers
+    query = <<-SQL
+      SELECT chefs.*   
+        FROM chef_tenures co_worker_tenures
+        JOIN (SELECT *
+                FROM chef_tenures
+               WHERE chef_tenures.chef_id = ?) my_tenures
+          ON co_worker_tenures.restaurant_id = my_tenures.restaurant_id
+        JOIN chefs
+          ON co_worker_tenures.chef_id = chefs.id
+       WHERE (my_tenures.end_date >= co_worker_tenures.start_date) 
+             AND (my_tenures.start_date <= co_worker_tenures.end_date)
+             AND co_worker_tenures.chef_id != my_tenures.chef_id
+    SQL
+    
+    co_worker_list = ReviewsDatabase.instance.execute(query, self.id)
+    co_worker_list.map { |co_worker| Chef.parse(co_worker) }    
   end
   
 end

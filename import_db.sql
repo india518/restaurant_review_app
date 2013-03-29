@@ -1,4 +1,4 @@
-CREATE TABLE chef(
+CREATE TABLE chefs(
   id INTEGER PRIMARY KEY,
   first_name VARCHAR(50) NOT NULL,
   last_name VARCHAR(50) NOT NULL,
@@ -6,7 +6,7 @@ CREATE TABLE chef(
 );
 
 
-INSERT INTO chef (id, first_name, last_name, mentor_id)
+INSERT INTO chefs (id, first_name, last_name, mentor_id)
 VALUES (NULL, 'Julia', 'Child', NULL),
        (NULL, 'Gordon', 'Ramsey', 1),
        (NULL, 'Homaru', 'Cantu', 2),
@@ -14,7 +14,7 @@ VALUES (NULL, 'Julia', 'Child', NULL),
        (NULL, 'Adam', 'Zeisler', 3);
 
 
-CREATE TABLE restaurant(
+CREATE TABLE restaurants(
   id INTEGER PRIMARY KEY,
   name VARCHAR(50) NOT NULL,
   chef_id INTEGER,
@@ -22,7 +22,7 @@ CREATE TABLE restaurant(
   cuisine VARCHAR(255)
 );
 
-INSERT INTO restaurant (id, name ,chef_id, neighborhood, cuisine)
+INSERT INTO restaurants (id, name ,chef_id, neighborhood, cuisine)
 VALUES (NULL, 'PBS Studio', 1, 'PBS', 'French'),
        (NULL, 'Naglee Park Garage', 4, 'Naglee Park', 'American'),
        (NULL, 'Moto', 3, 'Downtown', 'Molecular Gastronomy'),
@@ -30,12 +30,12 @@ VALUES (NULL, 'PBS Studio', 1, 'PBS', 'French'),
        (NULL, 'BurgerJoint', 4, 'Downtown', 'American'),
 	   (NULL, 'FoodNetwork', 6, 'TV Land', 'British');
 
-CREATE TABLE cheftenure(
+CREATE TABLE chef_tenures(
   id INTEGER PRIMARY KEY,
   chef_id INTEGER,
   restaurant_id INTEGER NOT NULL,
-  start_date TEXT,
-  end_date TEXT,
+  start_date DATE,
+  end_date DATE,
   is_head_chef INTEGER
 );
 
@@ -43,35 +43,38 @@ CREATE TABLE cheftenure(
 -- SELECT start_date FROM cheftenure WHERE start_date <= date('2005-09-11')
 -- returns all start_dates before or on that date!
 
-INSERT INTO cheftenure (id, chef_id, restaurant_id, start_date, end_date, is_head_chef)
+INSERT INTO chef_tenures (id, chef_id, restaurant_id, start_date, end_date, is_head_chef)
 VALUES (NULL, 1, 1, '1956-12-12', '1990-06-21', 1),
        (NULL, 4, 5, '2001-07-14', '2009-02-28', 0),
        (NULL, 4, 2, '2009-03-21', '2013-03-28', 1),
        (NULL, 2, 6, '2000-01-01', '2012-09-17', 1),
        (NULL, 3, 3, '2004-02-11', '2009-09-11', 1),
-	   (NULL, 5, 3, '2007-03-08', '2009-09-11', 0);
+	   (NULL, 5, 3, '2007-03-08', '2009-09-11', 0),
+       (NULL, 2, 1, '1986-03-28', '1999-04-27', 1),
+       (NULL, 3, 1, '1997-10-14', '2004-02-10', 1)	   
+	   ;
 
-CREATE TABLE critic(
+CREATE TABLE critics(
   id INTEGER PRIMARY KEY,
   screen_name VARCHAR(50) NOT NULL
 );
 
-INSERT INTO critic (id, screen_name)
+INSERT INTO critics (id, screen_name)
 VALUES (NULL, 'food_judge'),
        (NULL, 'live_to_eat'),
        (NULL, 'feed_mee'),
        (NULL, 'yumm_yumm');
 
-CREATE TABLE restaurantreview(
+CREATE TABLE restaurant_reviews(
   id INTEGER PRIMARY KEY,
   restaurant_id INTEGER,
   critic_id INTEGER,
   score INTEGER,
-  review_date TEXT,
+  review_date DATE,
   review TEXT 
 );
 
-INSERT INTO restaurantreview (id, restaurant_id, critic_id, score, review_date, review)
+INSERT INTO restaurant_reviews (id, restaurant_id, critic_id, score, review_date, review)
 VALUES (NULL, 3, 1, 15, '2005-09-15', 'Slow service, but pretty good overall'),
        (NULL, 3, 4, 19, '2009-07-24', 'Awesome sauce!'),
        (NULL, 5, 1, 3, '2012-10-21', 'This place sucks'),

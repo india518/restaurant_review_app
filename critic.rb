@@ -8,13 +8,13 @@ class Critic
   attr_accessor :id #make this a reader later?
   
   def self.find_all
-    query = "SELECT * FROM critic"
+    query = "SELECT * FROM critics"
     critic_list = ReviewsDatabase.instance.execute(query)
     critic_list.map { |critic| Critic.parse(critic) }
   end
   
   def self.find_by_id(id)
-    query = "SELECT * FROM critic WHERE id = ?"
+    query = "SELECT * FROM critics WHERE id = ?"
     critic_list = ReviewsDatabase.instance.execute(query, id)
     critic_list.empty? ? nil : Critic.parse(critic_list[0])
   end
@@ -27,7 +27,7 @@ class Critic
   def self.save(critic)
     #refactor later for saving existing chef with changed data
     query = <<-SQL
-      INSERT INTO critic (id, screen_name)
+      INSERT INTO critics (id, screen_name)
       VALUES (NULL, ?)
     SQL
     
@@ -44,7 +44,7 @@ class Critic
     #return a list of all reviews this reviewer has writen
     query = <<-SQL
       SELECT *
-        FROM restaurantreview
+        FROM restaurant_reviews
        WHERE critic_id = ?
     SQL
     review_list = ReviewsDatabase.instance.execute(query, self.id)
@@ -55,7 +55,7 @@ class Critic
     #returns a number: SUM(all scores by this critic)/number of reviews
     query = <<-SQL
       SELECT AVG(score)
-        FROM restaurantreview
+        FROM restaurant_reviews
        WHERE critic_id = ?
     SQL
     ReviewsDatabase.instance.get_first_value(query, self.id)
