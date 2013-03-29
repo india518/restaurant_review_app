@@ -2,11 +2,11 @@ CREATE TABLE chef(
   id INTEGER PRIMARY KEY,
   first_name VARCHAR(50) NOT NULL,
   last_name VARCHAR(50) NOT NULL,
-  mentor VARCHAR(255)
+  mentor_id INTEGER
 );
 
 
-INSERT INTO chef (id, first_name, last_name, mentor)
+INSERT INTO chef (id, first_name, last_name, mentor_id)
 VALUES (NULL, 'Julia', 'Child', NULL),
        (NULL, 'Gordon', 'Ramsey', 1),
        (NULL, 'Homaru', 'Cantu', 2),
