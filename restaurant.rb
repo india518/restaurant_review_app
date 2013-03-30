@@ -1,6 +1,6 @@
 require 'sqlite3'
 require_relative 'reviews_database'
-require_relative 'chef'
+require_relative 'restaurant_reviews'
 
 class Restaurant
   attr_accessor :name, :chef_id, :neighborhood, :cuisine

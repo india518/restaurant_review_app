@@ -1,6 +1,6 @@
 require 'sqlite3'
 require_relative 'reviews_database'
-require_relative 'restaurant'
+require_relative 'restaurant_review'
 
 class Critic
   
@@ -47,6 +47,7 @@ class Critic
         FROM restaurant_reviews
        WHERE critic_id = ?
     SQL
+    
     review_list = ReviewsDatabase.instance.execute(query, self.id)
     review_list.map { |review| RestaurantReview.parse(review) }
   end
@@ -58,7 +59,43 @@ class Critic
         FROM restaurant_reviews
        WHERE critic_id = ?
     SQL
+    
     ReviewsDatabase.instance.get_first_value(query, self.id)
   end
   
+  def unreviewed_restaurants
+    query = <<-SQL
+           SELECT restaurants.*
+             FROM restaurants
+  LEFT OUTER JOIN restaurant_reviews
+               ON restaurants.id = restaurant_reviews.restaurant_id
+            WHERE restaurant_reviews.critic_id <> ? OR critic_id IS NULL
+         GROUP BY restaurants.id
+    SQL
+    
+    restaurant_list = ReviewsDatabase.instance.execute(query, self.id)
+    restaurant_list.map { |restaurant| Restaurant.parse(restaurant) }
+  end
+  
 end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

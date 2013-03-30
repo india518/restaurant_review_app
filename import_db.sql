@@ -11,7 +11,9 @@ VALUES (NULL, 'Julia', 'Child', NULL),
        (NULL, 'Gordon', 'Ramsey', 1),
        (NULL, 'Homaru', 'Cantu', 2),
        (NULL, 'Cookie', 'McFancypants', 2),
-       (NULL, 'Adam', 'Zeisler', 3);
+       (NULL, 'Adam', 'Zeisler', 3),
+       (NULL, 'Rachel', 'Ray', NULL)	   
+	   ;
 
 
 CREATE TABLE restaurants(
@@ -28,7 +30,7 @@ VALUES (NULL, 'PBS Studio', 1, 'PBS', 'French'),
        (NULL, 'Moto', 3, 'Downtown', 'Molecular Gastronomy'),
 	   (NULL, 'Otom', 5, 'Downtown', 'Molecular Gastronomy'),
        (NULL, 'BurgerJoint', 4, 'Downtown', 'American'),
-	   (NULL, 'FoodNetwork', 6, 'TV Land', 'British');
+	   (NULL, 'FoodNetwork', 6, 'TV Land', 'Homestyle');
 
 CREATE TABLE chef_tenures(
   id INTEGER PRIMARY KEY,
@@ -71,7 +73,7 @@ CREATE TABLE restaurant_reviews(
   critic_id INTEGER,
   score INTEGER,
   review_date DATE,
-  review TEXT 
+  review TEXT
 );
 
 INSERT INTO restaurant_reviews (id, restaurant_id, critic_id, score, review_date, review)
@@ -80,6 +82,6 @@ VALUES (NULL, 3, 1, 15, '2005-09-15', 'Slow service, but pretty good overall'),
        (NULL, 5, 1, 3, '2012-10-21', 'This place sucks'),
        (NULL, 6, 3, 13, '2008-08-08', 'Chef here is scary and loud!'),
        (NULL, 2, 2, 17, '2010-04-21', 'Guy Fieri ate here!'),
-	   (NULL, 2, 1, 14, '2013-01-16', 'Too expensive')
+	   (NULL, 2, 1, 14, '2013-01-16', 'Too expensive'),
 	   (NULL, 1, 3, 20, '1977-05-18', 'Best meal evar!')
 	   ;

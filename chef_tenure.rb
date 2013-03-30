@@ -1,7 +1,5 @@
 require 'sqlite3'
 require_relative 'reviews_database'
-require_relative 'chef'
-require_relative 'restaurant'
 
 class ChefTenure
 
