@@ -2,6 +2,7 @@ require 'sqlite3'
 require_relative 'reviews_database'
 
 class RestaurantReview
+  
   attr_accessor :restaurant_id, :critic_id, :score, :review_date, :review
   attr_accessor :id #make this a reader later?
   

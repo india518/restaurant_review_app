@@ -1,8 +1,9 @@
 require 'sqlite3'
 require_relative 'reviews_database'
-require_relative 'restaurant_reviews'
+require_relative 'restaurant_review'
 
 class Restaurant
+  
   attr_accessor :name, :chef_id, :neighborhood, :cuisine
   attr_accessor :id #make this a reader later?
   
@@ -34,6 +35,27 @@ class Restaurant
     SQL
     restaurant_list = ReviewsDatabase.instance.execute(query)
     restaurant_list.map { |restaurant| Restaurant.parse(restaurant) }
+  end
+  
+  def self.top_restaurants(n)
+    #Find the top n restaurants with the best average review.
+    query = <<-SQL
+      SELECT restaurants.*
+        FROM restaurant_reviews
+        JOIN restaurants
+          ON restaurant_reviews.restaurant_id = restaurants.id
+    GROUP BY restaurant_id
+    ORDER BY AVG(restaurant_reviews.score) DESC
+       LIMIT ?      
+    SQL
+
+    restaurant_list = ReviewsDatabase.instance.execute(query, n)
+    restaurant_list.map { |restaurant| Restaurant.parse(restaurant) }        
+  end
+  
+  def self.highly_reviewed_restaurants(min_reviews)
+    #Returns restaurants that have at least min_reviews filed
+    
   end
   
   def initialize(options = {})
