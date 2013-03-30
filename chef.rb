@@ -55,6 +55,8 @@ class Chef
   end
 
   def initialize(options = {})
+    # When creating a brand new chef:
+    # Chef.new("first_name" = "<first_name_str>", "last_name" => "<last_name_str>")
     @id, @mentor_id = options.values_at("id", "mentor_id")
     @first_name, @last_name = options.values_at("first_name", "last_name")
   end
