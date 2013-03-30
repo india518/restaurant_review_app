@@ -52,5 +52,4 @@ class RestaurantReview
     @id = ReviewsDatabase.instance.last_insert_row_id
   end
 
-  
 end
