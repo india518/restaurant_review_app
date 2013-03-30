@@ -11,24 +11,14 @@ class Chef
   def self.find_all
     query = "SELECT * FROM chefs"
     chef_list = ReviewsDatabase.instance.execute(query)
-    chef_list.map { |chef| Chef.parse(chef) }
+    chef_list.map { |chef| Chef.new(chef) }
   end
   
   def self.find_by_id(id)
     query = "SELECT * FROM chefs WHERE id = ?"
     chef_list = ReviewsDatabase.instance.execute(query, id)
-    
-    p chef_list[0]
-    
     chef_list.empty? ? nil : Chef.new(chef_list[0])
   end
-
-  # def self.parse(chef)
-  #   Chef.new(id: chef["id"],
-  #            first_name: chef["first_name"],
-  #            last_name: chef["last_name"],
-  #            mentor_id: chef["mentor_id"])
-  # end
   
   def attrs
       { :first_name => first_name, :last_name => last_name, :mentor_id => mentor_id }
@@ -70,7 +60,7 @@ class Chef
     SQL
     
     proteges_list = ReviewsDatabase.instance.execute(query, self.id)
-    proteges_list.map { |proteges| Chef.parse(proteges) }
+    proteges_list.map { |proteges| Chef.new(proteges) }
   end
   
   def num_proteges
@@ -100,7 +90,7 @@ class Chef
     SQL
     
     co_worker_list = ReviewsDatabase.instance.execute(query, self.id)
-    co_worker_list.map { |co_worker| Chef.parse(co_worker) }    
+    co_worker_list.map { |co_worker| Chef.new(co_worker) }    
   end
   
   def reviews
@@ -122,14 +112,3 @@ class Chef
   end
   
 end
-
-
-
-
-
-
-
-
-
-
-
