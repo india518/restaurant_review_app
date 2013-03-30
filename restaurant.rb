@@ -55,7 +55,17 @@ class Restaurant
   
   def self.highly_reviewed_restaurants(min_reviews)
     #Returns restaurants that have at least min_reviews filed
-    
+    query = <<-SQL
+      SELECT restaurants.*
+        FROM restaurant_reviews
+        JOIN restaurants
+          ON restaurant_reviews.restaurant_id = restaurants.id
+    GROUP BY restaurant_reviews.restaurant_id
+      HAVING COUNT(*) >= ?
+    SQL
+
+    restaurant_list = ReviewsDatabase.instance.execute(query, min_reviews)
+    restaurant_list.map { |restaurant| Restaurant.parse(restaurant) }       
   end
   
   def initialize(options = {})
@@ -84,6 +94,7 @@ class Restaurant
         FROM restaurant_reviews
        WHERE restaurant_id = ?
     SQL
+    
     review_list = ReviewsDatabase.instance.execute(query, self.id)
     review_list.map { |review| RestaurantReview.parse(review) }   
   end
