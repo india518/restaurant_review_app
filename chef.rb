@@ -6,7 +6,7 @@ require_relative 'restaurant_review'
 class Chef
   
   attr_accessor :first_name, :last_name, :mentor_id
-  attr_accessor :id #make this a reader later?
+  attr_reader :id
   
   def self.find_all
     query = "SELECT * FROM chefs"
