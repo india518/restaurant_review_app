@@ -5,39 +5,45 @@ require_relative 'restaurant_review'
 class Critic
   
   attr_accessor :screen_name
-  attr_accessor :id #make this a reader later?
+  attr_reader :id
   
   def self.find_all
     query = "SELECT * FROM critics"
     critic_list = ReviewsDatabase.instance.execute(query)
-    critic_list.map { |critic| Critic.parse(critic) }
+    critic_list.map { |critic| Critic.new(critic) }
   end
   
   def self.find_by_id(id)
     query = "SELECT * FROM critics WHERE id = ?"
     critic_list = ReviewsDatabase.instance.execute(query, id)
-    critic_list.empty? ? nil : Critic.parse(critic_list[0])
-  end
-
-  def self.parse(critic)
-    Critic.new(id: critic["id"],
-               screen_name: critic["screen_name"])
+    critic_list.empty? ? nil : Critic.new(critic_list[0])
   end
   
-  def self.save(critic)
-    #refactor later for saving existing chef with changed data
-    query = <<-SQL
-      INSERT INTO critics (id, screen_name)
-      VALUES (NULL, ?)
-    SQL
-    
-    ReviewsDatabase.instance.execute(query, critic.screen_name)
-    true
+  def attrs
+    { :screen_name => screen_name }
   end
-
+  
   def initialize(options = {})
-    @id = options[:id]
-    @screen_name = options[:screen_name]
+    @id, @screen_name = options.values_at("id", "screen_name")
+  end
+  
+  def save
+    if @id
+      query = <<-SQL      
+        UPDATE critics
+           SET "screen_name" = :screen_name
+         WHERE critics.id = :id
+        SQL
+      
+      ReviewsDatabase.instance.execute(query, attrs.merge({ :id => id }))
+    else
+      query = <<-SQL
+        INSERT INTO critics (id, screen_name)
+        VALUES (NULL, :screen_name)
+      SQL
+    
+      ReviewsDatabase.instance.execute(query, attrs)
+    end
   end
   
   def reviews
@@ -48,8 +54,8 @@ class Critic
        WHERE critic_id = ?
     SQL
     
-    review_list = ReviewsDatabase.instance.execute(query, self.id)
-    review_list.map { |review| RestaurantReview.parse(review) }
+    review_list = ReviewsDatabase.instance.execute(query, id)
+    review_list.map { |review| RestaurantReview.new(review) }
   end
   
   def average_review_score
@@ -74,28 +80,7 @@ class Critic
     SQL
     
     restaurant_list = ReviewsDatabase.instance.execute(query, self.id)
-    restaurant_list.map { |restaurant| Restaurant.parse(restaurant) }
+    restaurant_list.map { |restaurant| Restaurant.new(restaurant) }
   end
   
 end
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
