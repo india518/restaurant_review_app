@@ -103,7 +103,7 @@ class Restaurant
     SQL
     
     review_list = ReviewsDatabase.instance.execute(query, self.id)
-    review_list.map { |review| RestaurantReview.parse(review) }   
+    review_list.map { |review| RestaurantReview.new(review) }   
   end
   
   def average_review_score

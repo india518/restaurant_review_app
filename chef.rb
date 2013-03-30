@@ -108,7 +108,7 @@ class Chef
     SQL
     
     review_list = ReviewsDatabase.instance.execute(query, self.id)
-    review_list.map { |review| RestaurantReview.parse(review) }           
+    review_list.map { |review| RestaurantReview.new(review) }           
   end
   
 end
