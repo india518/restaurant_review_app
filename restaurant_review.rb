@@ -4,48 +4,52 @@ require_relative 'reviews_database'
 class RestaurantReview
   
   attr_accessor :restaurant_id, :critic_id, :score, :review_date, :review
-  attr_accessor :id #make this a reader later?
+  attr_reader :id
   
   def self.find_all
     query = "SELECT * FROM restaurant_reviews"
     review_list = ReviewsDatabase.instance.execute(query)
-    review_list.map { |review| RestaurantReview.parse(review) }
+    review_list.map { |review| RestaurantReview.new(review) }
   end
   
   def self.find_by_id(id)
     query = "SELECT * FROM restaurant_reviews WHERE id = ?"
     review_list = ReviewsDatabase.instance.execute(query, id)    
-    review_list.empty? ? nil : parse(review_list[0])
+    review_list.empty? ? nil : RestaurantReview.new(review_list[0])
   end
   
-  def self.parse(review)
-    RestaurantReview.new(id: review["id"],
-                         restaurant_id: review["restaurant_id"],
-                         critic_id: review["critic_id"],
-                         score: review["score"],
-                         review_date: review["review_date"],
-                         review: review["review"])
+  def attrs
+      { :restaurant_id => restaurant_id, :critic_id => critic_id,
+        :score => score, :review_date => review_date, :review => review }
   end
   
   def initialize(options = {})
-    @id = options[:id]
-    @restaurant_id, @critic_id = options[:restaurant_id], options[:critic_id]
-    @score, @review_date = options[:score], options[:review_date]
-    @review = options[:review]
+    @id, @restaurant_id = options.values_at("id", "restaurant_id")
+    @critic_id, @score = options.values_at("critic_id", "score")
+    @review_date = options["review_date"].to_s
+    @review = options["review"]
   end
   
-  def self.save(restaurant)
-    #refactor later for saving existing restaurant with changed data
-    #Also: refactor SQL later! Options hash, not "?" !!!
-    query = <<-SQL
-      INSERT INTO restaurants (id, restaurant_id, critic_id, score, review_date, review)
-      VALUES (NULL, ?, ?, ?, ?, ?)
-    SQL
-    ReviewsDatabase.instance.execute(query, review.restaurant_id,
-                                     review.critic_id,
-                                     review.score, review.review_date,
-                                     review.review)
-    true
+  def save
+    if @id
+      query = <<-SQL
+      UPDATE restaurant_reviews
+         SET "restaurant_id" = :restaurant_id, "critic_id" = :critic_id,
+             "score" = :score, "review_date" = :review_date, "review" = :review
+       WHERE restaurant_reviews.id = :id
+      SQL
+      
+      ReviewsDatabase.instance.execute(query, attrs.merge({ :id => id }))
+    else
+      query = <<-SQL
+        INSERT INTO restaurant_reviews (id, restaurant_id, critic_id, score, review_date, review)
+        VALUES (NULL, :restaurant_id, :critic_id, :score, :review_date, :review)
+      SQL
+      
+      ReviewsDatabase.instance.execute(query, attrs)
+    end
+    
+    @id = ReviewsDatabase.instance.last_insert_row_id
   end
 
   
