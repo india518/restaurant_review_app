@@ -10,23 +10,15 @@ class Restaurant
   def self.find_all
     query = "SELECT * FROM restaurants"
     restaurant_list = ReviewsDatabase.instance.execute(query)
-    restaurant_list.map { |restaurant| Restaurant.parse(restaurant) }
+    restaurant_list.map { |restaurant| Restaurant.new(restaurant) }
   end
   
   def self.find_by_id(id)
     query = "SELECT * FROM restaurants WHERE id = ?"
     restaurant_list = ReviewsDatabase.instance.execute(query, id)    
-    restaurant_list.empty? ? nil : parse(restaurant_list[0])
+    restaurant_list.empty? ? nil : Restaurant.new(restaurant_list[0])
   end
 
-  def self.parse(restaurant)
-    Restaurant.new(id: restaurant["id"],
-                   name: restaurant["name"],
-                   chef_id: restaurant["chef_id"],
-                   neighborhood: restaurant["neighborhood"],
-                   cuisine: restaurant["cuisine"])
-  end
-  
   def self.by_neighborhood
     query = <<-SQL
       SELECT *
@@ -34,7 +26,7 @@ class Restaurant
     ORDER BY neighborhood
     SQL
     restaurant_list = ReviewsDatabase.instance.execute(query)
-    restaurant_list.map { |restaurant| Restaurant.parse(restaurant) }
+    restaurant_list.map { |restaurant| Restaurant.new(restaurant) }
   end
   
   def self.top_restaurants(n)
@@ -50,7 +42,7 @@ class Restaurant
     SQL
 
     restaurant_list = ReviewsDatabase.instance.execute(query, n)
-    restaurant_list.map { |restaurant| Restaurant.parse(restaurant) }        
+    restaurant_list.map { |restaurant| Restaurant.new(restaurant) }        
   end
   
   def self.highly_reviewed_restaurants(min_reviews)
@@ -65,14 +57,21 @@ class Restaurant
     SQL
 
     restaurant_list = ReviewsDatabase.instance.execute(query, min_reviews)
-    restaurant_list.map { |restaurant| Restaurant.parse(restaurant) }       
+    restaurant_list.map { |restaurant| Restaurant.new(restaurant) }       
   end
   
+  def attrs
+      { :name => name, :chef_id => chef_id,
+        :neighborhood => neighborhood, :cuisine => cuisine }
+  end
+    
   def initialize(options = {})
-    @id = options[:id]
-    @name = options[:name]
-    @chef_id = options[:chef_id]
-    @neighborhood, @cuisine = options[:neighborhood], options[:cuisine]
+    # When creating a brand new restaurant:
+    # Restaurant.new("name" = "<name_str>",
+    #                "neighborhood" => "<neighborhood_str>", etc.)
+    @id, @chef_id = options.values_at("id", "chef_id")
+    @name, @neighborhood = options.values_at("name", "neighborhood")
+    @cuisine = options["cuisine"]
   end
   
   def self.save(restaurant)
