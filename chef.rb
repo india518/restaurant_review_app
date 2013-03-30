@@ -28,14 +28,25 @@ class Chef
   end
   
   def self.save(chef)
-    #refactor later for saving existing chef with changed data
-    query = <<-SQL
-      INSERT INTO chefs (id, first_name, last_name, mentor_id)
-      VALUES (NULL, ?, ?, ?)
-    SQL
+    if @id
+      query = <<-SQL
+      UPDATE chefs
+         SET "first_name" = ?, "last_name" = ?, "mentor_id" = ?
+       WHERE chefs.id = ?
+      SQL
+      
+      ReviewsDatabase.instance.execute(query, chef.first_name, 
+                                      chef.last_name, chef.mentor_id, chef.id)
+    else
+      query = <<-SQL
+        INSERT INTO chefs (id, first_name, last_name, mentor_id)
+        VALUES (NULL, ?, ?, ?)
+      SQL
+      ReviewsDatabase.instance.execute(query, chef.first_name, chef.last_name,
+                                       chef.mentor_id)
+    end
     
-    ReviewsDatabase.instance.execute(query, chef.first_name, chef.last_name, chef.mentor_id)
-    true
+    @id = ReviewsDatabase.instance.last_insert_row_id
   end
 
   def initialize(options = {})
