@@ -5,7 +5,7 @@ require_relative 'restaurant_review'
 class Restaurant
   
   attr_accessor :name, :chef_id, :neighborhood, :cuisine
-  attr_accessor :id #make this a reader later?
+  attr_reader :id
   
   def self.find_all
     query = "SELECT * FROM restaurants"
@@ -74,16 +74,24 @@ class Restaurant
     @cuisine = options["cuisine"]
   end
   
-  def self.save(restaurant)
-    #refactor later for saving existing restaurant with changed data
-    #Also: refactor SQL later! Options hash, not "?" !!!
-    query = <<-SQL
-      INSERT INTO restaurants (id, name, chef_id, neighborhood, cuisine)
-      VALUES (NULL, ?, ?, ?, ?)
-    SQL
-    ReviewsDatabase.instance.execute(query, restaurant.name, restaurant.chef_id,
-                                     restaurant.neighborhood, restaurant.cuisine)
-    true
+  def save
+    if @id
+      query = <<-SQL
+      UPDATE restaurants
+         SET "name" = :name, "neighborhood" = :neighborhood,
+             "chef_id" = :chef_id, "cuisine" = :cuisine
+       WHERE restaurants.id = :id
+      SQL
+      
+      ReviewsDatabase.instance.execute(query, attrs.merge({ :id => id }))
+    else
+      query = <<-SQL
+        INSERT INTO restaurants (id, name, chef_id, neighborhood, cuisine)
+        VALUES (NULL, :name, :chef_id, :neighborhood, :cuisine)
+      SQL
+      ReviewsDatabase.instance.execute(query, attrs)
+    end
+    @id = ReviewsDatabase.instance.last_insert_row_id
   end
   
   def reviews
