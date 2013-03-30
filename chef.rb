@@ -17,42 +17,46 @@ class Chef
   def self.find_by_id(id)
     query = "SELECT * FROM chefs WHERE id = ?"
     chef_list = ReviewsDatabase.instance.execute(query, id)
-    chef_list.empty? ? nil : Chef.parse(chef_list[0])
+    
+    p chef_list[0]
+    
+    chef_list.empty? ? nil : Chef.new(chef_list[0])
   end
 
-  def self.parse(chef)
-    Chef.new(id: chef["id"],
-             first_name: chef["first_name"],
-             last_name: chef["last_name"],
-             mentor_id: chef["mentor_id"])
-  end
+  # def self.parse(chef)
+  #   Chef.new(id: chef["id"],
+  #            first_name: chef["first_name"],
+  #            last_name: chef["last_name"],
+  #            mentor_id: chef["mentor_id"])
+  # end
   
-  def self.save(chef)
+  def attrs
+      { :first_name => first_name, :last_name => last_name, :mentor_id => mentor_id }
+  end
+    
+  def save
     if @id
       query = <<-SQL
       UPDATE chefs
-         SET "first_name" = ?, "last_name" = ?, "mentor_id" = ?
-       WHERE chefs.id = ?
+         SET "first_name" = :first_name, "last_name" = :last_name, "mentor_id" = :mentor_id
+       WHERE chefs.id = :id
       SQL
       
-      ReviewsDatabase.instance.execute(query, chef.first_name, 
-                                      chef.last_name, chef.mentor_id, chef.id)
+      ReviewsDatabase.instance.execute(query, attrs.merge({ :id => id }))
     else
       query = <<-SQL
         INSERT INTO chefs (id, first_name, last_name, mentor_id)
-        VALUES (NULL, ?, ?, ?)
+        VALUES (NULL, :first_name, :last_name, :mentor_id)
       SQL
-      ReviewsDatabase.instance.execute(query, chef.first_name, chef.last_name,
-                                       chef.mentor_id)
+      ReviewsDatabase.instance.execute(query, attrs)
     end
     
     @id = ReviewsDatabase.instance.last_insert_row_id
   end
 
   def initialize(options = {})
-    @id = options[:id]
-    @first_name, @last_name = options[:first_name], options[:last_name]
-    @mentor_id = options[:mentor_id]
+    @id, @mentor_id = options.values_at("id", "mentor_id")
+    @first_name, @last_name = options.values_at("first_name", "last_name")
   end
   
   def proteges
